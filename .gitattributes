@@ -1,0 +1,9 @@
+# Garante fim de linha LF em todo o repositório (projeto bash roda em Linux).
+* text=auto eol=lf
+
+# Scripts e fichas sempre em LF, mesmo quando editados no Windows.
+jsec        text eol=lf
+*.sh        text eol=lf
+*.ficha     text eol=lf
+*.yml       text eol=lf
+*.md        text eol=lf

@@ -1,0 +1,50 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+
+jobs:
+  validar:
+    name: Validar scripts e fichas
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Checar sintaxe do jsec e do instalador
+        run: |
+          bash -n jsec
+          bash -n install.sh
+
+      - name: Checar sintaxe de todas as fichas
+        run: |
+          erros=0
+          for f in fichas/*.ficha; do
+            if ! bash -n "$f"; then
+              echo "::error file=$f::sintaxe invalida"
+              erros=1
+            fi
+          done
+          exit $erros
+
+      - name: Garantir que cada ficha tem os campos obrigatorios
+        run: |
+          erros=0
+          for f in fichas/*.ficha; do
+            base="$(basename "$f")"
+            [ "$base" = "_modelo.ficha" ] && continue
+            for campo in NOME CATEGORIA DESC EXEMPLO PASSOS DICA; do
+              if ! grep -q "^$campo=" "$f"; then
+                echo "::error file=$f::campo obrigatorio ausente: $campo"
+                erros=1
+              fi
+            done
+          done
+          exit $erros
+
+      - name: Analise estatica (shellcheck)
+        run: |
+          sudo apt-get update && sudo apt-get install -y shellcheck
+          shellcheck jsec install.sh || true

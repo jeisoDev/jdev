@@ -1,0 +1,21 @@
+NOME="gau"
+CATEGORIA="Reconhecimento web (URLs históricas)"
+ALIASES="getallurls"
+DESC="Coleta URLs já conhecidas de um domínio a partir de fontes públicas (Wayback Machine, Common Crawl, etc.). Passivo: acha endpoints antigos e esquecidos sem tocar no alvo."
+EXEMPLO='gau <dominio> > urls.txt'
+PASSOS="- gau: a ferramenta (get all urls)
+- <dominio>: domínio alvo (ex.: exemplo.com)
+- > urls.txt: salva a saída num arquivo"
+FLUXO="1) Colete todas as URLs históricas do domínio:
+\$ gau <dominio> | sort -u > urls.txt
+2) Filtre as que têm parâmetros (pontos de injeção para testar):
+\$ grep '=' urls.txt | sort -u > params.txt
+3) Garimpe por extensões/arquivos interessantes:
+\$ grep -E '\\.(bak|zip|sql|config|env|log)$' urls.txt
+4) Alimente os scanners (passivo -> ativo):
+\$ cat params.txt | dalfox pipe
+\$ cat urls.txt | httpx -mc 200 -silent   # quais ainda estão vivas"
+DICA="É passivo: pega URLs do histórico público, sem bater no alvo — ótimo para escopos
+restritos e para achar o que já foi exposto. Erro comum: não deduplicar (sempre 'sort -u')
+e testar URLs mortas — confirme com httpx antes. Complementa o katana (crawl ativo)."
+VER_TAMBEM="katana (crawl ativo), httpx (vivos), dalfox/sqlmap (testar parâmetros)"

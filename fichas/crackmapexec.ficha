@@ -1,0 +1,24 @@
+NOME="crackmapexec"
+CATEGORIA="Enumeração SMB/Windows"
+ALIASES="cme nxc netexec"
+DESC="Canivete para redes Windows/Active Directory: valida credenciais em massa, enumera hosts e shares, e executa comandos via SMB/WinRM/LDAP/MSSQL. Hoje continuado como 'netexec' (nxc)."
+EXEMPLO='crackmapexec smb <faixa-ip> -u <usuario> -p <senha>'
+PASSOS="- crackmapexec: a ferramenta (use 'netexec'/nxc nas versões novas)
+- smb: protocolo a usar (há winrm, ldap, mssql, ssh…)
+- <faixa-ip>: alvo ou faixa (ex.: 192.168.1.0/24)
+- -u <usuario> / -p <senha>: credenciais a validar na rede"
+FLUXO="1) Enumere hosts SMB vivos na faixa (sem credencial, com sessão nula):
+\$ crackmapexec smb 192.168.1.0/24
+2) Valide uma credencial em toda a faixa (acha ONDE ela funciona):
+\$ crackmapexec smb 192.168.1.0/24 -u usuario -p 'Senha123'
+   (um '+' verde = login válido; '(Pwn3d!)' = você é admin naquele host)
+3) Com acesso, enumere mais:
+\$ crackmapexec smb <alvo> -u usuario -p 'Senha123' --shares --users
+4) Em host com admin, execute um comando:
+\$ crackmapexec smb <alvo> -u usuario -p 'Senha123' -x 'whoami'
+5) Password spraying controlado (uma senha para muitos usuários):
+\$ crackmapexec smb <alvo> -u users.txt -p 'Primavera2024' --continue-on-success"
+DICA="Spray sem cuidado TRAVA contas (lockout) e dispara alarmes — respeite a política de
+senha (veja com enum4linux) e evite -p lista grande por usuário. Erro comum: confundir
+'login válido' com 'admin' — só o (Pwn3d!) indica execução. Use só em ambiente aprovado."
+VER_TAMBEM="enum4linux/smbclient (enumerar), responder (capturar hashes), hydra (brute em outros serviços)"

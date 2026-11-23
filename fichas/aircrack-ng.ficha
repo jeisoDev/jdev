@@ -1,0 +1,23 @@
+NOME="aircrack-ng"
+CATEGORIA="Segurança Wi-Fi"
+ALIASES="aircrack"
+DESC="Suíte para auditar redes Wi-Fi: coloca a placa em modo monitor, captura o handshake WPA/WPA2 e testa a senha offline contra uma wordlist."
+EXEMPLO='aircrack-ng -w <wordlist> captura.cap'
+PASSOS="- aircrack-ng: o quebrador da suíte
+- -w <wordlist>: lista de senhas candidatas (ex.: rockyou.txt)
+- captura.cap: arquivo de captura que contém o handshake WPA"
+FLUXO="1) Coloque a placa em modo monitor:
+\$ sudo airmon-ng start wlan0
+2) Veja as redes e descubra o canal/BSSID do SEU alvo autorizado:
+\$ sudo airodump-ng wlan0mon
+3) Capture focando na rede alvo até pegar um handshake WPA:
+\$ sudo airodump-ng -c <canal> --bssid <BSSID> -w captura wlan0mon
+   (o handshake aparece no topo quando um cliente se (re)conecta)
+4) Quebre a senha offline com o arquivo capturado:
+\$ aircrack-ng -w /usr/share/wordlists/rockyou.txt captura-01.cap
+5) Volte a placa ao normal: sudo airmon-ng stop wlan0mon"
+DICA="Sem handshake no arquivo, o aircrack não tem o que quebrar — confirme a captura antes.
+Precisa de placa que suporte modo monitor. IMPORTANTE: só teste a SUA rede ou uma com
+autorização escrita — capturar/atacar Wi-Fi alheio é crime. WPA forte pode ser inquebrável
+por dicionário; aí o ponto fraco costuma ser senha fraca/WPS, não o algoritmo."
+VER_TAMBEM="hashcat (quebrar handshake convertido em .hc22000), wireshark (inspecionar a captura)"

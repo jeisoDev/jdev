@@ -1,0 +1,20 @@
+NOME="masscan"
+CATEGORIA="Scanner de rede / portas"
+ALIASES=""
+DESC="Scanner de portas extremamente rápido, feito para varrer faixas enormes de IPs. Serve para a varredura inicial (descobrir o que está vivo/aberto) antes de detalhar com o nmap."
+EXEMPLO='masscan <faixa-ip> -p1-65535 --rate 1000'
+PASSOS="- masscan: o scanner em si
+- <faixa-ip>: faixa de alvos em CIDR (ex.: 10.0.0.0/24)
+- -p1-65535: intervalo de portas a varrer (aqui, todas)
+- --rate 1000: pacotes por segundo (controla a velocidade/agressividade)"
+FLUXO="1) Varra a faixa salvando a saída num formato fácil de reaproveitar:
+\$ masscan 10.0.0.0/24 -p1-65535 --rate 1000 -oG masscan.gnmap
+2) Extraia só os IPs/portas abertos do resultado:
+\$ grep -oE '[0-9.]+ ' masscan.gnmap | sort -u > vivos.txt
+3) Passe os alvos achados para o nmap detalhar serviço e versão:
+\$ nmap -sV -sC -iL vivos.txt -oA detalhe
+   (masscan ACHA portas; nmap DIZ o que roda nelas)"
+DICA="Rate alto pode saturar o link ou disparar alarmes/IDS. Comece baixo (--rate 100)
+em redes de produção. Precisa de root. Erro comum: confiar só no masscan para
+versões — ele é rápido, mas raso; sempre confirme com nmap. Varra só redes autorizadas."
+VER_TAMBEM="nmap (detalhar versões/serviços), httpx (web vivos)"

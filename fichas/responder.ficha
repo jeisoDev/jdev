@@ -1,0 +1,23 @@
+NOME="responder"
+CATEGORIA="Rede / Man-in-the-Middle (LLMNR/NBT-NS)"
+ALIASES=""
+DESC="Responde a consultas LLMNR/NBT-NS/mDNS numa rede Windows para capturar hashes de autenticação (NetNTLM) que você pode então quebrar offline ou repassar (relay)."
+EXEMPLO='responder -I <interface>'
+PASSOS="- responder: a ferramenta
+- -I <interface>: interface onde escutar/responder (ex.: eth0)"
+FLUXO="1) Ligue o responder na interface da rede alvo (autorizada):
+\$ sudo responder -I eth0
+2) Aguarde: quando uma máquina procura um nome que não existe, o responder
+   responde 'sou eu' e captura o hash NetNTLM de quem tentar autenticar.
+3) Os hashes capturados ficam salvos em:
+   /usr/share/responder/logs/
+4) Quebre o hash offline:
+\$ hashcat -m 5600 hash_netntlmv2.txt /usr/share/wordlists/rockyou.txt
+   (-m 5600 = NetNTLMv2)
+5) Alternativa: em vez de quebrar, fazer relay do hash para outro host
+   (ntlmrelayx) — técnica mais avançada, só com escopo bem definido."
+DICA="É INTRUSIVO: ele envenena respostas de nome e afeta outras máquinas reais da rede.
+Os hashes NetNTLMv2 são mais difíceis de quebrar que você imagina — senhas fortes resistem.
+IMPORTANTE: rodar numa rede que não é sua é ilegal e prejudica usuários reais — só em
+laboratório ou engajamento autorizado por escrito."
+VER_TAMBEM="hashcat (quebrar NetNTLM), crackmapexec (usar credencial), wireshark (observar o tráfego)"

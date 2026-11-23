@@ -1,0 +1,31 @@
+# MODELO DE FICHA — copie este arquivo, renomeie para <ferramenta>.ficha
+# e preencha os campos. NÃO é necessário mexer no script jsec.
+#
+# Regras:
+# - O nome do arquivo (sem .ficha) é como a ferramenta será chamada.
+#   Ex.: fichas/nmap.ficha  ->  jsec nmap
+# - Use aspas. Campos multilinha (PASSOS/DICA) podem ter várias linhas.
+# - ALIASES: outros nomes aceitos, separados por espaço (opcional).
+
+# Campos obrigatórios: NOME, CATEGORIA, DESC, EXEMPLO, PASSOS, DICA
+# Campos opcionais : ALIASES, FLUXO, VER_TAMBEM
+#   - FLUXO: fluxo completo de uso (ponta a ponta). Linhas que começam com
+#            "$ " são destacadas como comando. Deixe "" para não exibir.
+#   - VER_TAMBEM: ferramentas relacionadas (texto livre). Deixe "" para ocultar.
+
+NOME="nome-da-ferramenta"
+CATEGORIA="categoria aqui"
+ALIASES=""
+DESC="Descrição curta: o que faz e para que serve."
+EXEMPLO='comando -flag <alvo> <wordlist>'
+PASSOS="- comando: o programa em si
+- -flag: o que essa flag faz
+- <alvo>: o que colocar aqui
+- <wordlist>: o que colocar aqui"
+FLUXO="1) Primeiro passo, com o comando:
+\$ comando --preparar
+2) Segundo passo:
+\$ comando --rodar <alvo>
+3) O que fazer com o resultado."
+DICA="Uma dica de uso OU um erro comum de iniciante a evitar."
+VER_TAMBEM="outra-ferramenta, mais-uma"

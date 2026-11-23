@@ -1,0 +1,24 @@
+NOME="ffuf"
+CATEGORIA="Enumeração web (diretórios/DNS)"
+ALIASES=""
+DESC="Fuzzer web rápido e flexível: descobre diretórios, arquivos, parâmetros, valores e subdomínios substituindo a palavra FUZZ onde você quiser na requisição."
+EXEMPLO='ffuf -u <url>/FUZZ -w <wordlist> -mc 200,301'
+PASSOS="- ffuf: o fuzzer
+- -u <url>/FUZZ: URL com a palavra-chave FUZZ onde a wordlist será injetada
+- -w <wordlist>: lista de termos a testar
+- -mc 200,301: 'match codes' — só mostra respostas com esses códigos HTTP"
+FLUXO="1) Fuzz de diretórios/arquivos:
+\$ ffuf -u http://<alvo>/FUZZ -w /usr/share/wordlists/dirb/common.txt
+2) Filtre o ruído por TAMANHO quando o site devolve 200 em tudo:
+\$ ffuf -u http://<alvo>/FUZZ -w common.txt -fs 1234
+   (-fs esconde respostas com esse tamanho; -fc por código; -fw por palavras)
+3) Fuzz de subdomínios (vhost) via header Host:
+\$ ffuf -u http://<alvo>/ -H 'Host: FUZZ.<dominio>' -w subs.txt -fs 0
+4) Fuzz de NOME de parâmetro:
+\$ ffuf -u 'http://<alvo>/pagina?FUZZ=1' -w params.txt -fc 404
+5) Fuzz de VALOR de parâmetro (ex.: achar IDs válidos):
+\$ ffuf -u 'http://<alvo>/pagina?id=FUZZ' -w numeros.txt -mc 200"
+DICA="FUZZ pode ir em qualquer lugar: path, parâmetro, header, cookie ou subdomínio.
+A chave é FILTRAR (-fs/-fc/-fw) para não afogar em falsos positivos (páginas de erro
+'bonitas' que retornam 200). Use -recursion para descer em diretórios achados."
+VER_TAMBEM="gobuster (mais simples), wfuzz, katana/gau (coletar alvos), dalfox/sqlmap (testar o que achar)"

@@ -1,0 +1,23 @@
+NOME="wfuzz"
+CATEGORIA="Enumeração web (diretórios/DNS)"
+ALIASES=""
+DESC="Fuzzer web flexível: substitui a palavra FUZZ em URLs, dados POST, headers e cookies. Ótimo para fuzzing de formulários e parâmetros, com filtros ricos."
+EXEMPLO='wfuzz -c -z file,<wordlist> --hc 404 <url>/FUZZ'
+PASSOS="- wfuzz: o fuzzer
+- -c: saída colorida
+- -z file,<wordlist>: 'payload' do tipo arquivo, lendo os termos da wordlist
+- --hc 404: 'hide code' — esconde respostas com código 404
+- <url>/FUZZ: onde a palavra FUZZ será substituída pelos termos"
+FLUXO="1) Fuzz de diretórios, escondendo 404:
+\$ wfuzz -c -z file,/usr/share/wordlists/dirb/common.txt --hc 404 http://<alvo>/FUZZ
+2) Quando o site responde 200 para tudo, esconda por palavras/linhas:
+\$ wfuzz -c -z file,common.txt --hw 56 http://<alvo>/FUZZ
+   (--hw esconde por nº de palavras; --hl por nº de linhas; --hh por tamanho)
+3) Fuzz de login via POST (teste de credenciais em formulário):
+\$ wfuzz -c -z file,senhas.txt -d 'user=admin&pass=FUZZ' --hc 200 http://<alvo>/login
+   (aqui --hc 200 some com a página de 'falhou'; o acerto se destaca)
+4) Duas listas ao mesmo tempo (user E senha): use FUZZ e FUZ2Z com dois -z."
+DICA="Dá para esconder por código (--hc), palavras (--hw), linhas (--hl) ou tamanho (--hh) —
+é isso que separa o sinal do ruído. Erro comum: não filtrar e não enxergar o resultado
+real no meio de centenas de respostas iguais. Só teste alvos autorizados."
+VER_TAMBEM="ffuf (mais rápido), gobuster, hydra (brute force dedicado a login)"

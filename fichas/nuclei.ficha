@@ -1,0 +1,26 @@
+NOME="nuclei"
+CATEGORIA="Scanner de vulnerabilidades web"
+ALIASES=""
+DESC="Scanner baseado em templates YAML da comunidade: detecta CVEs conhecidos, configs expostas, painéis de login, segredos e muito mais. É a forma rápida de triar MUITOS alvos em busca de problemas conhecidos."
+EXEMPLO='nuclei -u <url> -severity high,critical'
+PASSOS="- nuclei: o scanner
+- -u <url>: alvo único (use -l lista.txt para vários)
+- -severity high,critical: só roda templates dessas severidades (foca no que importa)"
+FLUXO="1) Atualize a engine e os templates (faça sempre antes de escanear):
+\$ nuclei -update
+\$ nuclei -update-templates
+2) Prepare a lista de alvos VIVOS (não jogue domínios mortos no nuclei):
+\$ subfinder -d <dominio> | httpx -silent > vivos.txt
+3) Rode a triagem focando no que importa:
+\$ nuclei -l vivos.txt -severity critical,high,medium -o achados.txt
+4) Refine por tipo de verificação, se quiser mirar algo específico:
+   -tags cve        (só checagens de CVE)
+   -tags exposure   (arquivos/painéis expostos)
+   -t http/technologies/  (um caminho de template específico)
+5) Investigue manualmente cada achado antes de reportar — nuclei aponta
+   indícios; a confirmação e o impacto são seu trabalho."
+DICA="Rodar TODOS os templates sem filtro é lento e barulhento; filtre por -severity
+e -tags. Controle a carga com -rl (rate limit) e -c (concorrência) para não
+derrubar o alvo. Erro comum: tratar todo achado como vulnerabilidade confirmada —
+valide. Use só em alvos autorizados/escopo definido."
+VER_TAMBEM="subfinder + httpx (montar a lista de alvos), whatweb (fingerprint), searchsploit (exploit do CVE)"

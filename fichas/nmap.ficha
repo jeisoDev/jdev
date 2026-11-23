@@ -1,0 +1,30 @@
+NOME="nmap"
+CATEGORIA="Scanner de rede / portas"
+ALIASES=""
+DESC="Mapeia hosts e portas numa rede, descobre serviços, versões e sistema operacional. É quase sempre o PRIMEIRO passo de um pentest: você precisa saber o que está aberto antes de atacar qualquer coisa."
+EXEMPLO='nmap -sV -sC -p- <alvo>'
+PASSOS="- nmap: o scanner em si
+- -sV: detecta a versão do serviço rodando em cada porta aberta
+- -sC: roda os scripts padrão do NSE (checagens seguras e úteis)
+- -p-: varre TODAS as 65535 portas (sem isso, só as 1000 mais comuns)
+- <alvo>: IP ou domínio do host (ex.: 192.168.1.10 ou alvo.local)"
+FLUXO="1) Varredura rápida só para achar quais portas estão abertas:
+\$ nmap -F <alvo>
+   (-F = fast, só as 100 portas mais comuns; é rápido e discreto)
+2) Varredura completa de portas em segundo plano, se quiser cobrir tudo:
+\$ nmap -p- <alvo>
+   (anote as portas abertas que aparecerem, ex.: 22,80,445)
+3) Aprofunde SÓ nas portas abertas (versão + scripts):
+\$ nmap -sV -sC -p 22,80,445 <alvo>
+4) Salve o resultado em todos os formatos para consultar depois:
+\$ nmap -sV -sC -p 22,80,445 -oA scan_alvo <alvo>
+   (-oA gera .nmap, .gnmap e .xml com o prefixo 'scan_alvo')
+5) Use o que achou como entrada para as próximas ferramentas:
+   - porta 80/443 -> whatweb, nikto, gobuster/ffuf
+   - porta 445    -> enum4linux, smbclient
+   - versões -> searchsploit <produto> <versao>"
+DICA="Varrer -p- é lento; por isso o fluxo acima separa 'achar portas' de 'detalhar'.
+Para scans de versão mais confiáveis use -sV; para detectar SO, -O (precisa root).
+Erro comum: varreduras barulhentas aparecem em IDS/firewall — ajuste a velocidade
+com -T2/-T3 em ambientes sensíveis. Scaneie apenas redes suas ou autorizadas."
+VER_TAMBEM="masscan (varrer faixas grandes), whatweb/nikto (web), searchsploit (exploits), enum4linux (SMB)"

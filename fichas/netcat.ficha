@@ -1,0 +1,25 @@
+NOME="netcat"
+CATEGORIA="Rede / utilitário"
+ALIASES="nc ncat"
+DESC="'Canivete suíço' de rede: conecta, escuta portas, transfere arquivos, testa serviços e recebe shells reversas. É um dos utilitários mais usados em pentest e CTF."
+EXEMPLO='nc -lvnp <porta>'
+PASSOS="- nc: o netcat
+- -l: modo listen (fica escutando, esperando uma conexão)
+- -v: verboso (mostra o que está acontecendo)
+- -n: não resolve DNS (mais rápido, evita travar)
+- -p <porta>: a porta onde vai escutar (ex.: 4444)"
+FLUXO="Testar se uma porta remota está aberta:
+\$ nc -vz <alvo> <porta>
+Conversar com um serviço de texto (ex.: ver o banner de um servidor):
+\$ nc <alvo> 80
+   (depois digite: GET / HTTP/1.0  e Enter duas vezes)
+Transferir um arquivo (receptor escuta, emissor envia):
+\$ nc -lvnp 4444 > recebido.bin        # na máquina que RECEBE
+\$ nc <ip-receptor> 4444 < arquivo.bin  # na máquina que ENVIA
+Receber uma shell reversa (uso em CTF/lab autorizado):
+\$ nc -lvnp 4444
+   (o alvo, já comprometido, conecta de volta no seu IP:4444)"
+DICA="Sem -n o nc pode travar esperando DNS reverso. Em alguns sistemas o binário é
+'ncat' (do nmap) ou um netcat 'sem -e'. Erro comum: esquecer de abrir o listener
+ANTES de disparar a conexão do outro lado. Shells reversas só em ambiente autorizado."
+VER_TAMBEM="nmap/ncat (scan + listener), curl (HTTP), socat (alternativa robusta)"

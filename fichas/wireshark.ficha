@@ -1,0 +1,21 @@
+NOME="wireshark"
+CATEGORIA="Análise de tráfego / sniffing"
+ALIASES="tshark"
+DESC="Analisador de protocolos de rede, o padrão da indústria. Wireshark é gráfico; tshark é a versão de terminal. Usado para inspecionar, filtrar e extrair dados de capturas de tráfego."
+EXEMPLO='tshark -i <interface> -f "tcp port 443" -w captura.pcap'
+PASSOS="- tshark: versão CLI do Wireshark
+- -i <interface>: interface a capturar (ex.: eth0)
+- -f \"tcp port 443\": filtro de CAPTURA (sintaxe BPF, aplicado na hora)
+- -w captura.pcap: grava os pacotes em arquivo"
+FLUXO="1) Capture (ou receba um .pcap pronto de outra pessoa).
+2) Filtre na EXIBIÇÃO ao ler um arquivo já salvo (sintaxe diferente da captura):
+\$ tshark -r captura.pcap -Y 'http.request'
+3) Extraia campos específicos para uma análise rápida:
+\$ tshark -r captura.pcap -Y 'http.request' -T fields -e http.host -e http.request.uri
+4) Siga um fluxo TCP inteiro (reconstruir uma conversa):
+\$ tshark -r captura.pcap -z follow,tcp,ascii,0
+   No modo gráfico: botão direito num pacote > Follow > TCP Stream."
+DICA="Não confunda filtro de CAPTURA (-f, estilo tcpdump) com filtro de EXIBIÇÃO
+(-Y, ex.: 'ip.addr==1.2.3.4 && http'). Capturar exige root; analisar um .pcap, não.
+Erro comum: aplicar sintaxe de exibição no -f (ou vice-versa) e não capturar nada."
+VER_TAMBEM="tcpdump (captura leve em servidor), responder (gera tráfego interessante)"

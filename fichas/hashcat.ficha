@@ -1,0 +1,29 @@
+NOME="hashcat"
+CATEGORIA="Cracking de senhas (offline)"
+ALIASES=""
+DESC="Quebrador de hashes acelerado por GPU, muito rápido e com muitos modos de ataque. Usado para testar, offline, a força de senhas a partir de hashes que você tem direito de auditar."
+EXEMPLO='hashcat -m <modo> -a 0 hashes.txt <wordlist>'
+PASSOS="- hashcat: a ferramenta
+- -m <modo>: tipo do hash em número (ex.: 0=MD5, 100=SHA1, 1000=NTLM, 1800=sha512crypt)
+- -a 0: modo de ataque 0 = por dicionário (wordlist)
+- hashes.txt: arquivo com os hashes (um por linha)
+- <wordlist>: lista de senhas candidatas (ex.: rockyou.txt)"
+FLUXO="1) Identifique o tipo do hash para achar o -m certo:
+\$ hashid '<hash>'
+   (ou consulte a lista: hashcat --help | grep -i <palavra>)
+2) Coloque os hashes num arquivo, um por linha:
+\$ echo '<hash>' > hashes.txt
+3) Ataque por dicionário (o mais comum e eficiente):
+\$ hashcat -m 1000 -a 0 hashes.txt /usr/share/wordlists/rockyou.txt
+4) Potencialize o dicionário com regras (gera variações das senhas):
+\$ hashcat -m 1000 -a 0 hashes.txt rockyou.txt -r /usr/share/hashcat/rules/best64.rule
+5) Se o dicionário falhar, tente força bruta por máscara (-a 3):
+\$ hashcat -m 1000 -a 3 hashes.txt '?u?l?l?l?l?d?d'
+   (?u=maiúscula ?l=minúscula ?d=dígito ?s=símbolo)
+6) Veja o que já foi quebrado (fica salvo no potfile):
+\$ hashcat -m 1000 hashes.txt --show"
+DICA="O erro nº1 é escolher o -m errado e achar que 'não quebrou' — confirme o tipo com
+hashid e com o formato do hash. GPU acelera muito; em VM sem GPU pode ser lento (use
+--force se avisar sobre OpenCL). Regras (-r) costumam render mais que wordlists gigantes.
+IMPORTANTE: quebre apenas hashes que você tem autorização para testar."
+VER_TAMBEM="hashid (identificar o hash), john (alternativa em CPU), hydra (brute force online)"

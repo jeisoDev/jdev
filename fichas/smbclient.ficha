@@ -1,0 +1,24 @@
+NOME="smbclient"
+CATEGORIA="Enumeração SMB/Windows"
+ALIASES=""
+DESC="Cliente de linha de comando para acessar compartilhamentos SMB/CIFS (estilo FTP): listar, baixar e enviar arquivos. Usado para explorar os shares achados na enumeração."
+EXEMPLO='smbclient -L //<alvo>/ -N'
+PASSOS="- smbclient: o cliente SMB
+- -L //<alvo>/: lista os compartilhamentos disponíveis no host
+- -N: sem senha (tenta sessão nula/anônima, comum em alvos mal configurados)"
+FLUXO="1) Liste os compartilhamentos (tente sessão nula primeiro):
+\$ smbclient -L //<alvo>/ -N
+   (com credencial: smbclient -L //<alvo>/ -U 'usuario%senha')
+2) Entre num share que interessar:
+\$ smbclient //<alvo>/<share> -N
+3) Dentro do prompt 'smb: \\>', navegue e baixe arquivos:
+   smb: \\> ls
+   smb: \\> cd pasta
+   smb: \\> get arquivo.txt
+   smb: \\> prompt off; recurse on; mget *   (baixa tudo recursivamente)
+4) Saia com 'exit'. Para só baixar sem interagir, use -c 'comando'."
+DICA="Sessão nula (-N) nem sempre é permitida — às vezes precisa -U usuario. Em SMB novo,
+pode ser preciso forçar protocolo: -m SMB2 ou a opção 'client min protocol'. Erro comum:
+não usar 'prompt off; recurse on' antes do mget e ter que confirmar arquivo por arquivo.
+Acesse apenas compartilhamentos que você tem direito de testar."
+VER_TAMBEM="enum4linux (enumerar antes), crackmapexec (spray/exec), smbmap (mapear permissões)"

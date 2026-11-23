@@ -1,0 +1,19 @@
+NOME="dirb"
+CATEGORIA="Enumeração web (diretórios/DNS)"
+ALIASES=""
+DESC="Scanner clássico de conteúdo web: testa uma wordlist de diretórios/arquivos num site, de forma recursiva. Simples e bom para quem está começando."
+EXEMPLO='dirb <url> <wordlist>'
+PASSOS="- dirb: a ferramenta
+- <url>: alvo (ex.: http://alvo.local/)
+- <wordlist>: lista a testar (padrão: /usr/share/dirb/wordlists/common.txt)"
+FLUXO="1) Varredura básica (usa common.txt se você não passar wordlist):
+\$ dirb http://<alvo>/
+2) Com wordlist e extensões específicas:
+\$ dirb http://<alvo>/ /usr/share/wordlists/dirb/big.txt -X .php,.bak,.txt
+3) Salve o resultado e não recurse (mais rápido) se o site for grande:
+\$ dirb http://<alvo>/ -o dirb.txt -r
+4) Explore manualmente cada caminho encontrado (CODE:200/301/403)."
+DICA="É mais lento que ffuf/gobuster, mas direto ao ponto. Use -X para extensões e -r
+para não entrar recursivamente. Erro comum: esquecer a barra final na URL em alguns
+servidores. Para fuzzing avançado (filtros finos), migre para o ffuf."
+VER_TAMBEM="gobuster, ffuf, wfuzz (alternativas mais rápidas/flexíveis)"

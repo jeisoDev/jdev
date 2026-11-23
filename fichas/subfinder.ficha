@@ -1,0 +1,22 @@
+NOME="subfinder"
+CATEGORIA="Reconhecimento (subdomínios)"
+ALIASES=""
+DESC="Descobre subdomínios de um domínio de forma passiva, consultando dezenas de fontes públicas. Rápido e silencioso, é o ponto de partida para mapear a superfície de ataque."
+EXEMPLO='subfinder -d <dominio> -o subs.txt'
+PASSOS="- subfinder: a ferramenta
+- -d <dominio>: domínio raiz (ex.: exemplo.com)
+- -o subs.txt: salva os subdomínios encontrados nesse arquivo"
+FLUXO="1) Enumere subdomínios do alvo:
+\$ subfinder -d <dominio> -all -o subs.txt
+   (-all usa todas as fontes; configure chaves de API para render mais)
+2) Descubra quais estão VIVOS (respondendo HTTP):
+\$ cat subs.txt | httpx -silent > vivos.txt
+3) Triagem de vulnerabilidades nos vivos:
+\$ nuclei -l vivos.txt -severity critical,high
+4) Combine com amass para ampliar a cobertura e deduplique:
+\$ amass enum -d <dominio> -o amass.txt
+\$ cat subs.txt amass.txt | sort -u > todos.txt"
+DICA="É passivo (não bate direto no alvo), ótimo para começar sem barulho. Configure as
+chaves de API (~/.config/subfinder/provider-config.yaml) para achar muito mais.
+Erro comum: parar no subfinder — a enumeração fica muito melhor combinada com amass."
+VER_TAMBEM="httpx (filtrar vivos), nuclei (triagem), amass (mais cobertura), gau/katana (URLs)"

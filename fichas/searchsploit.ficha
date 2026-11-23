@@ -1,0 +1,35 @@
+NOME="searchsploit"
+CATEGORIA="Pesquisa de exploits"
+ALIASES=""
+DESC="Busca exploits e papers na cópia OFFLINE do Exploit-DB que vem no Kali, direto do terminal. É o primeiro passo para achar um exploit público para uma versão vulnerável que você identificou no reconhecimento."
+EXEMPLO='searchsploit <produto> <versao>'
+PASSOS="- searchsploit: a ferramenta (banco local do Exploit-DB em /usr/share/exploitdb)
+- <produto>: nome do software (ex.: apache, vsftpd, wordpress)
+- <versao>: versão encontrada no recon (ex.: 2.3.4)
+- A saída tem duas colunas: o TÍTULO do exploit e o seu CAMINHO/EDB-ID
+  (ex.: unix/remote/17491.rb -> o número 17491 é o ID do exploit)"
+FLUXO="1) Descubra produto e versão do alvo (com nmap -sV, whatweb, etc.):
+\$ nmap -sV -p 21 <alvo>
+   (ex.: a saída mostra 'vsftpd 2.3.4')
+2) Pesquise por esse produto e versão:
+\$ searchsploit vsftpd 2.3.4
+   Dica: use termos específicos. Para refinar, há flags úteis:
+   -t  procura só no TÍTULO (menos ruído)
+   -e  busca por frase exata
+   --exclude=\"termo\"  remove resultados indesejados
+3) Leia o exploit ANTES de usar (nunca rode algo que você não entende):
+\$ searchsploit -x 17491
+   (-x abre o arquivo no leitor; -p só mostra o caminho completo)
+4) Copie o exploit para a sua pasta de trabalho atual:
+\$ searchsploit -m 17491
+   (-m 'mirror' copia o arquivo para o diretório atual, sem alterar o banco)
+5) Veja de que tipo é e prepare o uso:
+   - Script (.py/.sh/.rb): leia o cabeçalho, ajuste IP/porta e execute
+     \$ python3 17491.py <alvo>
+   - Muitos exploits do Exploit-DB também existem como módulo no Metasploit."
+DICA="SEMPRE leia o código do exploit antes de executar (searchsploit -x): exploits
+públicos podem estar desatualizados, exigir ajustes (IP, porta, offsets) ou conter
+armadilhas. Mantenha o banco atualizado com 'searchsploit -u'. Erro comum: buscar
+termos genéricos demais ('linux', 'windows') e se afogar — use produto + versão.
+Importante: só teste exploits em laboratório ou em alvos com autorização escrita."
+VER_TAMBEM="nmap (achar versões), metasploit (rodar exploits prontos), nuclei (checar CVEs)"

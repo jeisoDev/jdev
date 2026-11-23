@@ -1,0 +1,19 @@
+NOME="nikto"
+CATEGORIA="Scanner de vulnerabilidades web"
+ALIASES=""
+DESC="Varre servidores web em busca de arquivos perigosos, configs inseguras, versões desatualizadas e milhares de checagens conhecidas. É uma triagem rápida (e barulhenta) do servidor."
+EXEMPLO='nikto -h <url>'
+PASSOS="- nikto: o scanner
+- -h <url>: host/URL alvo (ex.: http://alvo.local ou https://alvo.local)"
+FLUXO="1) Faça o fingerprint antes para saber o que está rodando:
+\$ whatweb http://<alvo>
+2) Rode o nikto salvando um relatório:
+\$ nikto -h http://<alvo> -o nikto.html -Format htm
+3) Em HTTPS ou porta diferente, especifique:
+\$ nikto -h <alvo> -p 443 -ssl
+4) Investigue manualmente cada item reportado — nikto aponta indícios;
+   a confirmação do impacto é sua. Combine com nuclei para CVEs atuais."
+DICA="É MUITO barulhento (aparece em logs e IDS) — use só com autorização e avise o time.
+Pode gerar falsos positivos; valide. Erro comum: tratar a saída como laudo final em vez
+de lista de pistas a investigar. Para checagens de CVE mais atuais, use também o nuclei."
+VER_TAMBEM="whatweb (fingerprint), nuclei (CVEs por template), gobuster/ffuf (conteúdo oculto)"

@@ -1,0 +1,19 @@
+NOME="hashid"
+CATEGORIA="Cracking de senhas (offline)"
+ALIASES="hash-identifier"
+DESC="Identifica o tipo provável de um hash, ajudando a escolher o modo certo no john/hashcat. É o passo que evita você perder horas tentando quebrar com o algoritmo errado."
+EXEMPLO='hashid -m "<hash>"'
+PASSOS="- hashid: a ferramenta
+- -m: além do nome do hash, mostra o número do modo (-m) do hashcat
+- \"<hash>\": o hash a identificar, entre aspas (ou use -f arquivo.txt)"
+FLUXO="1) Jogue o hash no hashid para ver os candidatos e o modo do hashcat:
+\$ hashid -m '5f4dcc3b5aa765d61d8327deb882cf99'
+2) Anote o(s) '-m' sugerido(s) (ex.: [+] MD5 ... Hashcat Mode: 0).
+3) Use esse modo no cracking:
+\$ hashcat -m 0 -a 0 hashes.txt rockyou.txt
+4) Se houver vários candidatos, deixe o CONTEXTO decidir (de onde veio o hash:
+   NTLM do Windows? sha512crypt do /etc/shadow? MD5 de uma app web?)."
+DICA="É um palpite por FORMATO, não uma certeza — hashes de mesmo tamanho podem ser
+coisas diferentes. Erro comum: confiar cegamente no primeiro palpite e usar o modo
+errado. Alternativas: 'hash-identifier' (interativo) e 'nth'/name-that-hash (mais moderno)."
+VER_TAMBEM="hashcat (quebrar com o -m certo), john (alternativa em CPU)"

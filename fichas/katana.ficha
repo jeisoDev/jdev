@@ -1,0 +1,22 @@
+NOME="katana"
+CATEGORIA="Reconhecimento web (crawling)"
+ALIASES=""
+DESC="Crawler web moderno (ProjectDiscovery): percorre um site seguindo links e coleta URLs, endpoints e parâmetros — inclusive de dentro de arquivos JavaScript."
+EXEMPLO='katana -u <url> -d 3 -o urls.txt'
+PASSOS="- katana: o crawler
+- -u <url>: ponto de partida (ex.: https://alvo.local)
+- -d 3: profundidade do crawl (quantos níveis de links seguir)
+- -o urls.txt: salva as URLs encontradas"
+FLUXO="1) Crawl do site coletando URLs:
+\$ katana -u https://<alvo> -d 3 -o urls.txt
+2) Inclua endpoints extraídos de arquivos JS (acha rotas de API escondidas):
+\$ katana -u https://<alvo> -jc -d 3 -o urls.txt
+3) Filtre as URLs com parâmetros (candidatas a XSS/SQLi):
+\$ grep '=' urls.txt | sort -u > params.txt
+4) Alimente os testes:
+\$ cat params.txt | dalfox pipe
+\$ sqlmap -m params.txt --batch"
+DICA="Use -jc para extrair endpoints de JavaScript (um dos maiores diferenciais dele).
+Profundidade alta em site grande = crawl demorado e muito ruído — ajuste -d ao alvo.
+Erro comum: crawl ativo em escopo que só permite coleta passiva — aí use o gau."
+VER_TAMBEM="gau (URLs passivas/históricas), httpx (vivos), dalfox/sqlmap (testar parâmetros), ffuf"

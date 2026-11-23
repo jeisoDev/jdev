@@ -1,0 +1,319 @@
+#!/usr/bin/env bash
+#
+# jsec - cheat sheet didático das ferramentas de pentest do Kali Linux
+# Autor  : json-dev
+# Licença: MIT
+#
+
+set -u
+
+readonly VERSAO="1.1.0"
+readonly AUTOR="json-dev"
+
+resolver_dir_script() {
+    local src="${BASH_SOURCE[0]}"
+    while [ -h "$src" ]; do
+        local dir
+        dir="$(cd -P "$(dirname "$src")" >/dev/null 2>&1 && pwd)"
+        src="$(readlink "$src")"
+        [[ "$src" != /* ]] && src="$dir/$src"
+    done
+    cd -P "$(dirname "$src")" >/dev/null 2>&1 && pwd
+}
+
+readonly DIR_SCRIPT="$(resolver_dir_script)"
+readonly DIR_FICHAS="$DIR_SCRIPT/fichas"
+
+if [ -t 1 ] && [ -z "${NO_COLOR:-}" ]; then
+    C_RESET=$'\033[0m'
+    C_BOLD=$'\033[1m'
+    C_DIM=$'\033[2m'
+    C_TITULO=$'\033[1;36m'
+    C_CAT=$'\033[1;35m'
+    C_SECAO=$'\033[1;33m'
+    C_CMD=$'\033[1;32m'
+    C_DICA=$'\033[1;34m'
+    C_ERRO=$'\033[1;31m'
+    C_PH=$'\033[0;33m'
+else
+    C_RESET="" C_BOLD="" C_DIM="" C_TITULO="" C_CAT="" C_SECAO=""
+    C_CMD="" C_DICA="" C_ERRO="" C_PH=""
+fi
+
+erro() {
+    printf "%s[erro]%s %s\n" "$C_ERRO" "$C_RESET" "$*" >&2
+}
+
+mostrar_banner() {
+    printf "%s" "$C_TITULO"
+    cat <<'BANNER'
+        _
+       (_)___  ___  ___
+       | / __|/ _ \/ __|
+       | \__ \  __/ (__
+      _/ |___/\___|\___|
+     |__/
+BANNER
+    printf "%s" "$C_RESET"
+    printf "    %scheat sheet didático de pentest (Kali) %s- autor: %s%s%s\n" \
+        "$C_DIM" "$C_RESET" "$C_CAT" "$AUTOR" "$C_RESET"
+}
+
+listar_slugs() {
+    local f base
+    for f in "$DIR_FICHAS"/*.ficha; do
+        [ -e "$f" ] || continue
+        base="$(basename "$f" .ficha)"
+        [[ "$base" == _* ]] && continue
+        printf "%s\n" "$base"
+    done
+}
+
+limpar_campos_ficha() {
+    NOME="" CATEGORIA="" DESC="" EXEMPLO="" PASSOS="" DICA="" ALIASES=""
+    FLUXO="" VER_TAMBEM=""
+}
+
+carregar_ficha() {
+    local slug="$1"
+    local arquivo="$DIR_FICHAS/$slug.ficha"
+    [ -f "$arquivo" ] || return 1
+    limpar_campos_ficha
+    # shellcheck disable=SC1090
+    source "$arquivo"
+    return 0
+}
+
+resolver_slug() {
+    local termo slug a
+    termo="$(printf "%s" "$1" | tr '[:upper:]' '[:lower:]')"
+    if [ -f "$DIR_FICHAS/$termo.ficha" ]; then
+        printf "%s\n" "$termo"
+        return 0
+    fi
+    for slug in $(listar_slugs); do
+        carregar_ficha "$slug" || continue
+        for a in $ALIASES; do
+            if [ "$(printf '%s' "$a" | tr '[:upper:]' '[:lower:]')" = "$termo" ]; then
+                printf "%s\n" "$slug"
+                return 0
+            fi
+        done
+    done
+    return 1
+}
+
+realcar_placeholders() {
+    printf "%s" "$1" | sed -E "s/(<[^>]+>)/${C_PH}\1${C_CMD}/g"
+}
+
+exibir_ficha() {
+    printf "\n"
+    printf "%s> %s%s   %s[%s]%s\n" "$C_TITULO" "$NOME" "$C_RESET" "$C_CAT" "$CATEGORIA" "$C_RESET"
+    printf "%s--------------------------------------------------%s\n" "$C_DIM" "$C_RESET"
+
+    printf "\n%sO que é / para que serve%s\n" "$C_SECAO" "$C_RESET"
+    printf "  %s\n" "$DESC"
+
+    printf "\n%sExemplo prático%s\n" "$C_SECAO" "$C_RESET"
+    printf "  %s%s%s\n" "$C_CMD" "$(realcar_placeholders "$EXEMPLO")" "$C_RESET"
+
+    printf "\n%sPasso a passo (o que cada parte faz)%s\n" "$C_SECAO" "$C_RESET"
+    printf "%s\n" "$PASSOS" | while IFS= read -r linha; do
+        [ -z "$linha" ] && { printf "\n"; continue; }
+        printf "  %s\n" "$linha"
+    done
+
+    if [ -n "$FLUXO" ]; then
+        printf "\n%sFluxo completo (do começo ao fim)%s\n" "$C_SECAO" "$C_RESET"
+        printf "%s\n" "$FLUXO" | while IFS= read -r linha; do
+            [ -z "$linha" ] && { printf "\n"; continue; }
+            case "$linha" in
+                '$ '*) printf "  %s%s%s\n" "$C_CMD" "${linha#\$ }" "$C_RESET" ;;
+                *)     printf "  %s\n" "$linha" ;;
+            esac
+        done
+    fi
+
+    printf "\n%sDica / erro comum%s\n" "$C_DICA" "$C_RESET"
+    printf "%s\n" "$DICA" | while IFS= read -r linha; do
+        printf "  %s\n" "$linha"
+    done
+
+    if [ -n "$VER_TAMBEM" ]; then
+        printf "\n%sVeja também%s\n" "$C_SECAO" "$C_RESET"
+        printf "  %s%s%s\n" "$C_DIM" "$VER_TAMBEM" "$C_RESET"
+    fi
+    printf "\n"
+}
+
+cmd_ficha() {
+    local termo="$1"
+    local slug achou=0 s
+    if ! slug="$(resolver_slug "$termo")"; then
+        printf "\n%sFerramenta \"%s\" não encontrada.%s\n" "$C_ERRO" "$termo" "$C_RESET"
+        printf "\nTalvez você queira dizer:\n"
+        for s in $(listar_slugs); do
+            if printf "%s" "$s" | grep -qi "$termo"; then
+                printf "  %s- %s%s\n" "$C_CMD" "$s" "$C_RESET"
+                achou=1
+            fi
+        done
+        [ "$achou" -eq 0 ] && printf "  %s(nenhuma parecida)%s\n" "$C_DIM" "$C_RESET"
+        printf "\nTente:\n"
+        printf "  jsec -s %s     %s(busca por nome e descrição)%s\n" "$termo" "$C_DIM" "$C_RESET"
+        printf "  jsec            %s(lista tudo por categoria)%s\n" "$C_DIM" "$C_RESET"
+        return 1
+    fi
+    carregar_ficha "$slug"
+    exibir_ficha
+}
+
+cmd_listar() {
+    mostrar_banner
+    printf "\n%sFerramentas disponíveis (agrupadas por categoria):%s\n" "$C_BOLD" "$C_RESET"
+
+    local linhas="" slug cat_atual=""
+    for slug in $(listar_slugs); do
+        carregar_ficha "$slug" || continue
+        linhas+="$CATEGORIA"$'\t'"$NOME"$'\t'"$DESC"$'\n'
+    done
+
+    printf "%s" "$linhas" | sort -t$'\t' -k1,1 -k2,2 | while IFS=$'\t' read -r cat nome desc; do
+        [ -z "$nome" ] && continue
+        if [ "$cat" != "$cat_atual" ]; then
+            printf "\n%s%s%s\n" "$C_CAT" "$cat" "$C_RESET"
+            cat_atual="$cat"
+        fi
+        printf "  %s%-16s%s %s%s%s\n" "$C_CMD" "$nome" "$C_RESET" "$C_DIM" "$desc" "$C_RESET"
+    done
+
+    printf "\n%sUse:%s jsec <ferramenta>   para ver a ficha completa.\n" "$C_BOLD" "$C_RESET"
+    printf "%sTotal:%s %s ferramentas.\n\n" "$C_BOLD" "$C_RESET" "$(listar_slugs | wc -l | tr -d ' ')"
+}
+
+cmd_buscar() {
+    local termo="$1"
+    local termo_lc achou=0 slug alvo
+    termo_lc="$(printf "%s" "$termo" | tr '[:upper:]' '[:lower:]')"
+    printf "\n%sResultados da busca por \"%s\":%s\n\n" "$C_BOLD" "$termo" "$C_RESET"
+
+    for slug in $(listar_slugs); do
+        carregar_ficha "$slug" || continue
+        alvo="$(printf "%s %s %s %s" "$NOME" "$CATEGORIA" "$DESC" "$ALIASES" | tr '[:upper:]' '[:lower:]')"
+        if printf "%s" "$alvo" | grep -qF "$termo_lc"; then
+            printf "  %s%-16s%s %s[%s]%s\n" "$C_CMD" "$NOME" "$C_RESET" "$C_CAT" "$CATEGORIA" "$C_RESET"
+            printf "      %s%s%s\n" "$C_DIM" "$DESC" "$C_RESET"
+            achou=1
+        fi
+    done
+
+    [ "$achou" -eq 0 ] && printf "  %snenhuma ferramenta encontrada para \"%s\".%s\n" "$C_ERRO" "$termo" "$C_RESET"
+    printf "\n"
+}
+
+cmd_categoria() {
+    local termo="$1"
+    local termo_lc achou=0 slug cat_lc c
+    termo_lc="$(printf "%s" "$termo" | tr '[:upper:]' '[:lower:]')"
+    printf "\n%sFerramentas na categoria \"%s\":%s\n\n" "$C_BOLD" "$termo" "$C_RESET"
+
+    for slug in $(listar_slugs); do
+        carregar_ficha "$slug" || continue
+        cat_lc="$(printf "%s" "$CATEGORIA" | tr '[:upper:]' '[:lower:]')"
+        if printf "%s" "$cat_lc" | grep -qF "$termo_lc"; then
+            printf "  %s%-16s%s %s%s%s\n" "$C_CMD" "$NOME" "$C_RESET" "$C_DIM" "$DESC" "$C_RESET"
+            achou=1
+        fi
+    done
+
+    if [ "$achou" -eq 0 ]; then
+        printf "  %snenhuma categoria parecida com \"%s\".%s\n" "$C_ERRO" "$termo" "$C_RESET"
+        printf "\n  Categorias disponíveis:\n"
+        for slug in $(listar_slugs); do
+            carregar_ficha "$slug" || continue
+            printf "%s\n" "$CATEGORIA"
+        done | sort -u | while IFS= read -r c; do
+            printf "    %s- %s%s\n" "$C_CAT" "$c" "$C_RESET"
+        done
+    fi
+    printf "\n"
+}
+
+cmd_ajuda() {
+    mostrar_banner
+    cat <<EOF
+
+${C_BOLD}USO${C_RESET}
+  ${C_CMD}jsec <ferramenta>${C_RESET}      Mostra a ficha didática da ferramenta
+                         Ex.: ${C_CMD}jsec hydra${C_RESET}
+  ${C_CMD}jsec${C_RESET}                   Lista todas as ferramentas por categoria
+  ${C_CMD}jsec -s <termo>${C_RESET}        Busca por nome ou descrição
+  ${C_CMD}jsec -c <categoria>${C_RESET}    Lista ferramentas de uma categoria
+  ${C_CMD}jsec -h, --help${C_RESET}        Esta ajuda
+  ${C_CMD}jsec --version${C_RESET}         Mostra a versão
+
+${C_BOLD}EXEMPLOS${C_RESET}
+  jsec nmap
+  jsec -s senha
+  jsec -c "brute force"
+
+${C_BOLD}SOBRE${C_RESET}
+  jsec é um cheat sheet didático, em português, para quem está
+  aprendendo as ferramentas do Kali Linux. Cada ficha traz um
+  exemplo prático, explicação passo a passo e uma dica.
+
+  ${C_DICA}Autor: ${AUTOR}${C_RESET}
+  Versão: ${VERSAO}
+
+${C_SECAO}AVISO LEGAL${C_RESET}
+  Use estas ferramentas apenas em sistemas seus ou com autorização
+  explícita e por escrito. Testar sistemas de terceiros sem permissão
+  é crime. Este projeto tem finalidade estritamente educacional.
+
+EOF
+}
+
+cmd_versao() {
+    printf "jsec %s - autor: %s\n" "$VERSAO" "$AUTOR"
+}
+
+if [ ! -d "$DIR_FICHAS" ]; then
+    erro "pasta de fichas não encontrada em: $DIR_FICHAS"
+    erro "o jsec precisa da pasta 'fichas/' ao lado do script."
+    exit 1
+fi
+
+case "${1:-}" in
+    "")
+        cmd_listar
+        ;;
+    -h|--help|-\?)
+        cmd_ajuda
+        ;;
+    --version|-V)
+        cmd_versao
+        ;;
+    -s|--search)
+        if [ -z "${2:-}" ]; then
+            erro "informe um termo. Ex.: jsec -s senha"
+            exit 1
+        fi
+        cmd_buscar "$2"
+        ;;
+    -c|--categoria|--category)
+        if [ -z "${2:-}" ]; then
+            erro "informe uma categoria. Ex.: jsec -c scanner"
+            exit 1
+        fi
+        cmd_categoria "$2"
+        ;;
+    -*)
+        erro "opção desconhecida: $1"
+        printf "Use %sjsec -h%s para ver a ajuda.\n" "$C_CMD" "$C_RESET"
+        exit 1
+        ;;
+    *)
+        cmd_ficha "$1"
+        ;;
+esac

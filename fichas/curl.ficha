@@ -1,0 +1,27 @@
+NOME="curl"
+CATEGORIA="Rede / utilitário HTTP"
+ALIASES=""
+DESC="Faz requisições HTTP(S) pela linha de comando: testar APIs, inspecionar headers e respostas, enviar dados e reproduzir requisições. Ferramenta essencial para entender uma aplicação antes de automatizar."
+EXEMPLO='curl -i -s -X POST <url> -d "campo=valor"'
+PASSOS="- curl: a ferramenta
+- -i: inclui os cabeçalhos de resposta na saída
+- -s: modo silencioso (esconde a barra de progresso)
+- -X POST: método HTTP a usar (padrão é GET)
+- <url>: endereço alvo
+- -d \"campo=valor\": corpo/dados enviados na requisição"
+FLUXO="1) Veja só os cabeçalhos de resposta (rápido para fingerprint):
+\$ curl -I https://<alvo>
+2) Faça um GET mostrando headers + corpo e seguindo redirecionamentos:
+\$ curl -i -L https://<alvo>/pagina
+3) Envie um POST de formulário (ex.: testar um login):
+\$ curl -i -s -X POST https://<alvo>/login -d 'user=admin&pass=123'
+4) Envie JSON para uma API, com header e token:
+\$ curl -s -X POST https://<alvo>/api -H 'Content-Type: application/json' \\
+       -H 'Authorization: Bearer <token>' -d '{\"q\":\"teste\"}'
+5) Baixe um arquivo:
+\$ curl -O https://<alvo>/arquivo.zip"
+DICA="Para só os headers use -I (HEAD); para seguir redirecionamentos, -L; para ver TUDO
+da conexão (útil para depurar TLS/headers), -v. Em sites com certificado inválido de
+laboratório, -k ignora a verificação (NÃO use isso em produção). Erro comum: esquecer -s
+em scripts e poluir a saída com a barra de progresso."
+VER_TAMBEM="netcat (conexões cruas), httpx (probing em massa), ffuf/wfuzz (fuzzing HTTP)"

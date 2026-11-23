@@ -1,0 +1,23 @@
+NOME="httpx"
+CATEGORIA="Reconhecimento web (probing)"
+ALIASES=""
+DESC="Sonda rápida de hosts HTTP(S) (ProjectDiscovery): diz quais estão vivos e mostra status, título, tecnologia e mais. É o elo entre a enumeração de subdomínios e os scanners."
+EXEMPLO='httpx -l subs.txt -title -tech-detect -status-code'
+PASSOS="- httpx: a ferramenta
+- -l subs.txt: lê a lista de hosts/subdomínios desse arquivo
+- -title: mostra o <title> de cada página
+- -tech-detect: identifica tecnologias usadas
+- -status-code: mostra o código HTTP de resposta"
+FLUXO="1) Receba uma lista de subdomínios (do subfinder/amass).
+2) Filtre quem está vivo e colete informações úteis:
+\$ cat subs.txt | httpx -title -tech-detect -status-code -o httpx.txt
+3) Para só a lista limpa de URLs vivas (para alimentar outra ferramenta):
+\$ cat subs.txt | httpx -silent > vivos.txt
+4) Procure alvos interessantes por status/porta:
+\$ cat subs.txt | httpx -mc 200,401,403 -ports 80,443,8080,8443
+5) Encadeie para a triagem de vulnerabilidades:
+\$ nuclei -l vivos.txt -severity critical,high"
+DICA="Cuidado para não confundir com o 'httpx' do Python (biblioteca) — aqui é o binário da
+ProjectDiscovery. Controle a carga com -rate-limit e -threads para não sobrecarregar.
+Erro comum: jogar domínios mortos direto no nuclei/nikto — filtre com httpx primeiro."
+VER_TAMBEM="subfinder/amass (gerar a lista), nuclei (triagem), katana/gau (URLs), whatweb"

@@ -1,0 +1,22 @@
+NOME="enum4linux"
+CATEGORIA="Enumeração SMB/Windows"
+ALIASES=""
+DESC="Enumera informações de sistemas Windows/Samba via SMB: usuários, grupos, compartilhamentos, políticas de senha e mais. Clássico primeiro passo quando a porta 139/445 está aberta."
+EXEMPLO='enum4linux -a <alvo>'
+PASSOS="- enum4linux: a ferramenta
+- -a: executa TODA a enumeração padrão (users, shares, groups, policy, etc.)
+- <alvo>: IP do host Windows/Samba (ex.: 192.168.1.20)"
+FLUXO="1) Confirme que SMB está aberto (nmap -p139,445 <alvo>).
+2) Rode a enumeração completa salvando em arquivo (é verboso):
+\$ enum4linux -a <alvo> | tee enum.txt
+3) Olhe o que importa no resultado:
+   - usuários (para brute force autorizado / password spray)
+   - compartilhamentos (Sharename) -> acesse com smbclient
+   - política de senha (ajuda a evitar travar contas)
+4) Liste e explore os shares encontrados:
+\$ smbclient -L //<alvo>/ -N
+5) Dica: a versão moderna 'enum4linux-ng' é mais rápida e dá saída em JSON."
+DICA="É verboso — sempre redirecione para arquivo (tee/>) para analisar com calma.
+Prefira o 'enum4linux-ng' quando disponível. Erro comum: ignorar os compartilhamentos
+e a política de senha achados, que são justamente os dados mais úteis para o próximo passo."
+VER_TAMBEM="smbclient (acessar shares), crackmapexec (validar credenciais), nmap (achar o SMB)"

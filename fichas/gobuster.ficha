@@ -1,0 +1,22 @@
+NOME="gobuster"
+CATEGORIA="Enumeração web (diretórios/DNS)"
+ALIASES=""
+DESC="Faz força bruta de diretórios, arquivos, subdomínios e vhosts em serviços web. Rápido e simples, é um dos primeiros passos para mapear o conteúdo escondido de um site."
+EXEMPLO='gobuster dir -u <url> -w <wordlist> -x php,txt'
+PASSOS="- gobuster: a ferramenta
+- dir: modo de enumeração de diretórios/arquivos (há também dns e vhost)
+- -u <url>: URL alvo (ex.: http://alvo.local)
+- -w <wordlist>: lista de nomes a testar (ex.: /usr/share/wordlists/dirb/common.txt)
+- -x php,txt: extensões a acrescentar em cada palavra (procura .php e .txt)"
+FLUXO="1) Enumere diretórios e arquivos do site:
+\$ gobuster dir -u http://<alvo> -w /usr/share/wordlists/dirb/common.txt -x php,txt,html
+2) Se achar algo (código 200/301/403), explore manualmente no navegador/curl.
+3) Enumere subdomínios (modo dns), se tiver um domínio:
+\$ gobuster dns -d <dominio> -w /usr/share/wordlists/amass/subdomains-top1mil-5000.txt
+4) Enumere virtual hosts (sites que respondem pelo mesmo IP):
+\$ gobuster vhost -u http://<alvo> -w wordlist-vhosts.txt
+5) Use wordlists maiores (ex.: SecLists) se a inicial não revelar nada."
+DICA="Use -t para threads e -b para esconder códigos (ex.: -b 404,403). Erro comum:
+wordlist gigante num alvo pequeno — comece por common.txt e refine. Para fuzzing
+mais avançado (parâmetros, filtros por tamanho), prefira o ffuf."
+VER_TAMBEM="ffuf (fuzzing flexível), dirb (alternativa simples), wfuzz, whatweb (fingerprint antes)"

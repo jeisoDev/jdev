@@ -1,0 +1,20 @@
+NOME="amass"
+CATEGORIA="Reconhecimento (subdomínios)"
+ALIASES=""
+DESC="Mapeamento abrangente da superfície de ataque (projeto da OWASP): enumera subdomínios e descobre relações de DNS/ASN. Mais minucioso (e mais lento) que o subfinder."
+EXEMPLO='amass enum -d <dominio>'
+PASSOS="- amass: a ferramenta
+- enum: modo de enumeração de subdomínios (há também 'intel' e 'viz')
+- -d <dominio>: domínio alvo (ex.: exemplo.com)"
+FLUXO="1) Enumeração passiva (discreta, sem consultar diretamente o alvo):
+\$ amass enum -passive -d <dominio> -o amass.txt
+2) Enumeração ativa (inclui brute force de DNS — mais achados, mais barulho):
+\$ amass enum -active -d <dominio> -brute -o amass_ativo.txt
+3) Descoberta de inteligência (ASNs/organizações relacionadas):
+\$ amass intel -org 'Nome da Empresa'
+4) Junte com o subfinder e siga o fluxo de probing:
+\$ cat amass.txt subs.txt | sort -u | httpx -silent > vivos.txt"
+DICA="O modo ativo faz brute force e é barulhento; o passivo é mais discreto. Pode demorar
+MUITO — é minucioso por natureza, não espere resultado instantâneo. Chaves de API
+melhoram bastante os resultados. Erro comum: cancelar achando que travou (está só lento)."
+VER_TAMBEM="subfinder (mais rápido), httpx (vivos), nuclei (triagem)"

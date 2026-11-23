@@ -1,0 +1,23 @@
+NOME="whatweb"
+CATEGORIA="Reconhecimento web (fingerprint)"
+ALIASES=""
+DESC="Identifica tecnologias de um site: CMS, servidor, frameworks, linguagens, versões e plugins. É o primeiro passo do recon web — saber o que você está enfrentando."
+EXEMPLO='whatweb -a 3 <url>'
+PASSOS="- whatweb: a ferramenta
+- -a 3: nível de agressividade (1=passivo e discreto … 4=mais invasivo)
+- <url>: alvo (ex.: http://alvo.local)"
+FLUXO="1) Comece passivo (discreto, só o que o site já entrega):
+\$ whatweb -a 1 http://<alvo>
+2) Se precisar de mais detalhes, suba a agressividade:
+\$ whatweb -a 3 -v http://<alvo>
+   (-v = verboso, mostra cada plugin que casou)
+3) Escaneie uma lista de alvos de uma vez:
+\$ whatweb -i vivos.txt --log-brief=whatweb.txt
+4) Com base no que achou, escolha a próxima ferramenta:
+   - WordPress -> wpscan
+   - servidor/versão antiga -> searchsploit / nuclei
+   - app genérico -> gobuster/ffuf + nikto"
+DICA="Comece sempre com -a 1 no recon silencioso; só suba a agressividade se precisar.
+Erro comum: pular o fingerprint e sair atacando às cegas sem saber qual tecnologia roda —
+isso faz você perder tempo com testes que nem se aplicam ao alvo."
+VER_TAMBEM="httpx (probing em massa), wpscan (WordPress), nikto/nuclei (vulns), gobuster/ffuf"

@@ -1,0 +1,20 @@
+NOME="wpscan"
+CATEGORIA="Scanner de vulnerabilidades web"
+ALIASES=""
+DESC="Scanner especializado em WordPress: identifica a versão do core, plugins/temas vulneráveis, usuários e configurações expostas. Essencial quando o fingerprint acusa WordPress."
+EXEMPLO='wpscan --url <url> --enumerate u,vp'
+PASSOS="- wpscan: o scanner
+- --url <url>: site WordPress alvo
+- --enumerate u,vp: enumera (u) usuários e (vp) plugins vulneráveis"
+FLUXO="1) Confirme que é WordPress (whatweb) e rode uma varredura ampla:
+\$ wpscan --url http://<alvo> --enumerate u,vp,vt,cb,dbe
+   (u=usuários vp=plugins vulneráveis vt=temas vulneráveis cb=config backups dbe=db exports)
+2) Para dados de vulnerabilidade atualizados, use um token grátis do WPScan:
+\$ wpscan --url http://<alvo> --enumerate vp --api-token <seu-token>
+3) Com usuários enumerados, um teste AUTORIZADO de senha no xmlrpc/wp-login:
+\$ wpscan --url http://<alvo> -U users.txt -P /usr/share/wordlists/rockyou.txt
+4) Investigue plugins/temas vulneráveis achados (versão -> searchsploit/CVE)."
+DICA="Sem --api-token, a base de vulnerabilidades fica limitada. Enumerar usuário NÃO é
+permissão para brute force — o passo 3 só em alvos autorizados. Erro comum: não registrar
+o token grátis e achar que 'não tem vulnerabilidade' quando faltou a base de dados."
+VER_TAMBEM="whatweb (detectar WP), searchsploit/nuclei (CVE dos plugins), hydra (login)"

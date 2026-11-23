@@ -1,0 +1,29 @@
+NOME="hydra"
+CATEGORIA="Brute force (autenticação)"
+ALIASES=""
+DESC="Testa credenciais contra serviços de login (SSH, FTP, HTTP, RDP, etc.) para encontrar senhas fracas. É uma ferramenta de teste de robustez de senhas em serviços autorizados."
+EXEMPLO='hydra -l <usuario> -P <wordlist> ssh://<alvo>'
+PASSOS="- hydra: a ferramenta
+- -l <usuario>: um usuário fixo (use -L lista.txt para vários usuários)
+- -P <wordlist>: lista de senhas a testar (ex.: rockyou.txt)
+- ssh://<alvo>: protocolo e host alvo (ex.: ssh://192.168.1.10)"
+FLUXO="1) Descubra o serviço de login no recon (nmap -sV) e pegue usuários, se houver
+   (enum4linux, wpscan --enumerate u, etc.).
+2) Prepare a wordlist de senhas (no Kali, descompacte a rockyou uma vez):
+\$ gunzip -k /usr/share/wordlists/rockyou.txt.gz
+3) Faça o ataque ao serviço. Exemplos por protocolo:
+   - SSH:
+\$ hydra -l admin -P /usr/share/wordlists/rockyou.txt ssh://<alvo> -t 4
+   - FTP:
+\$ hydra -L users.txt -P senhas.txt ftp://<alvo>
+   - Formulário web POST (o mais comum em CTF): informe caminho, campos e a
+     mensagem de FALHA que o site mostra, separados por ':'
+\$ hydra -l admin -P senhas.txt <alvo> http-post-form \"/login:user=^USER^&pass=^PASS^:Login incorreto\"
+4) Leia a saída: linhas com 'login:' e 'password:' indicam credencial válida.
+   -t controla as conexões simultâneas; -f para no primeiro acerto."
+DICA="Use -t baixo (ex.: 4) em SSH: muitas conexões derrubam/bloqueiam o serviço.
+No http-post-form, o segredo é acertar a string de FALHA (ou usar F=... para sucesso);
+errá-la gera falsos positivos/negativos. IMPORTANTE: isto testa senha fraca de forma
+AUTORIZADA — nunca use contra contas/serviços que não são seus; além de ilegal,
+dispara bloqueios de conta e alarmes."
+VER_TAMBEM="crackmapexec (spray em redes Windows), john/hashcat (cracking offline), nmap (achar o serviço)"

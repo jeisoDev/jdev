@@ -1,0 +1,22 @@
+NOME="tcpdump"
+CATEGORIA="Análise de tráfego / sniffing"
+ALIASES=""
+DESC="Captura e exibe pacotes de rede direto no terminal, com filtros poderosos (BPF). Ideal para capturar em servidores sem interface gráfica e depois analisar no Wireshark."
+EXEMPLO='tcpdump -i <interface> -nn port 80 -w captura.pcap'
+PASSOS="- tcpdump: o capturador
+- -i <interface>: interface de rede a escutar (ex.: eth0; use 'any' para todas)
+- -nn: não resolve nomes de host nem de porta (saída mais clara e rápida)
+- port 80: filtro BPF — só pacotes na porta 80 (HTTP)
+- -w captura.pcap: salva a captura num arquivo para abrir depois"
+FLUXO="1) Liste as interfaces disponíveis:
+\$ tcpdump -D
+2) Capture com filtro, salvando em arquivo (precisa de root):
+\$ sudo tcpdump -i eth0 -nn 'host <alvo> and port 80' -w captura.pcap
+3) Pare com Ctrl+C e leia o que capturou:
+\$ tcpdump -nn -r captura.pcap
+4) Abra o .pcap no Wireshark/tshark para análise detalhada:
+\$ tshark -r captura.pcap -Y 'http.request'"
+DICA="Capturar tudo sem filtro afoga você em pacotes — sempre filtre (host, port, net).
+Filtros comuns: 'tcp', 'udp', 'port 53', 'host 1.2.3.4 and not port 22'. Erro comum:
+esquecer -w e só ver o resumo na tela, sem salvar para analisar depois."
+VER_TAMBEM="wireshark/tshark (análise gráfica/CLI do .pcap)"

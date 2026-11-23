@@ -1,0 +1,20 @@
+NOME="dalfox"
+CATEGORIA="Exploração web (XSS)"
+ALIASES=""
+DESC="Scanner especializado em XSS (cross-site scripting): testa parâmetros, analisa o contexto da resposta e sugere/verifica payloads que realmente executam."
+EXEMPLO='dalfox url "<url>?q=teste"'
+PASSOS="- dalfox: a ferramenta
+- url: modo de alvo único por URL (há também 'file' e 'pipe')
+- \"<url>?q=teste\": URL com parâmetro a ser testado (aqui, q)"
+FLUXO="1) Colete URLs com parâmetros do alvo (XSS precisa de ponto de injeção):
+\$ gau <dominio> | grep '=' | sort -u > urls.txt
+2) Teste uma URL específica:
+\$ dalfox url 'http://<alvo>/busca?q=teste'
+3) Teste a lista inteira de uma vez, pelo pipe:
+\$ cat urls.txt | dalfox pipe
+4) Confirme manualmente no navegador cada 'POC' que o dalfox marcar como
+   verificado — e documente o impacto. Use -b para blind XSS com seu collector."
+DICA="Testar só a página inicial não acha nada — o segredo é alimentar o dalfox com URLs
+que TÊM parâmetros (gau/katana). Erro comum: reportar um reflexo como XSS sem confirmar
+execução real. IMPORTANTE: só em alvos autorizados/escopo de bug bounty definido."
+VER_TAMBEM="gau/katana (coletar URLs), ffuf (fuzz de parâmetros), sqlmap (SQLi nos mesmos pontos)"

@@ -1,0 +1,27 @@
+NOME="john"
+CATEGORIA="Cracking de senhas (offline)"
+ALIASES="john-the-ripper jtr"
+DESC="Quebra hashes de senha offline por dicionário ou força bruta. Vem com dezenas de utilitários '*2john' que extraem hashes de arquivos (zip, rar, ssh, pdf, etc.) para então quebrá-los."
+EXEMPLO='john --wordlist=<wordlist> hashes.txt'
+PASSOS="- john: o John the Ripper
+- --wordlist=<wordlist>: lista de senhas candidatas (ex.: rockyou.txt)
+- hashes.txt: arquivo com os hashes a quebrar (um por linha)"
+FLUXO="1) Obtenha o hash no formato que o john entende.
+   - De contas Linux (precisa de /etc/passwd e /etc/shadow):
+\$ unshadow /etc/passwd /etc/shadow > hashes.txt
+   - De um arquivo protegido (ex.: um .zip com senha):
+\$ zip2john arquivo.zip > hashes.txt
+     (existem rar2john, ssh2john, pdf2john, etc.)
+2) (opcional) deixe o john detectar o formato ou informe você mesmo:
+\$ john --list=formats | grep -i <tipo>
+3) Ataque por dicionário (com regras ligadas):
+\$ john --wordlist=/usr/share/wordlists/rockyou.txt --rules hashes.txt
+4) Se precisar, use o modo incremental (força bruta):
+\$ john --incremental hashes.txt
+5) Veja as senhas já quebradas:
+\$ john --show hashes.txt"
+DICA="Se o autodetect errar, informe o formato: --format=<tipo> (ex.: --format=raw-md5).
+A rockyou precisa ser descompactada uma vez: gunzip -k /usr/share/wordlists/rockyou.txt.gz.
+Erro comum: tentar quebrar o hash 'cru' sem antes usar o *2john correto. Para velocidade
+bruta em GPU, o hashcat costuma ser melhor. Use só em hashes que você pode auditar."
+VER_TAMBEM="hashcat (mais rápido em GPU), hashid (identificar hash), *2john (extrair hash de arquivos)"
