@@ -109,8 +109,8 @@ O `jsec` é 100% bash e usa apenas o coreutils — roda **offline**, sem depend�
 ### Opção 1 — Instalador automático (recomendada)
 
 ```bash
-git clone https://github.com/<seu-usuario>/jsec.git
-cd jsec
+git clone https://github.com/jeisoDev/jdev.git
+cd jdev
 chmod +x install.sh
 ./install.sh
 ```
